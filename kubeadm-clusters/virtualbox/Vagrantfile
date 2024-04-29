@@ -27,6 +27,8 @@ NODE_IP_START = 20
 # so you might want to use the single thread option.
 SINGLE_THREAD_MODE = false
 
+INSTALL_HELM = true
+
 # Host operating sysem detection
 module OS
   def OS.windows?
@@ -233,6 +235,11 @@ Vagrant.configure("2") do |config|
         worker_nodes.each do |node|
           command = "sudo #{CONNECT_STR}"
           system("vagrant ssh #{node} -c '#{command}'")
+        end
+
+        if INSTALL_HELM
+          system("vagrant ssh #{MASTER_NAME} -c 'curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash'")
+          puts "    Helm installed in #{MASTER_NAME} node..."
         end
 
         puts <<~EOF
