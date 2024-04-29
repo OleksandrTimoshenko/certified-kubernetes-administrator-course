@@ -9,6 +9,8 @@
 #            Use this mode if for some reason BRIDGE doesn't work for you.
 BUILD_MODE = "BRIDGE"
 VM_BRIDGE_NETWORK_INTERFACE = "enp0s8"
+POFT_FORWARDING_TO_HOST = true
+HOST_PORT = 8080
 
 # Define the number of worker nodes
 # If this number is changed, remember to update setup-hosts.sh script with the new hosts IP details in /etc/hosts of each VM.
@@ -134,6 +136,9 @@ Vagrant.configure("2") do |config|
     end
     node.vm.hostname = MASTER_NAME
     if BUILD_MODE == "BRIDGE"
+      if POFT_FORWARDING_TO_HOST
+        node.vm.network "forwarded_port", guest: 80, host: HOST_PORT
+      end
       adapter = ""
       node.vm.network :public_network, bridge: get_bridge_adapter()
     else
@@ -156,6 +161,9 @@ Vagrant.configure("2") do |config|
       end
       node.vm.hostname = "node0#{i}"
       if BUILD_MODE == "BRIDGE"
+        if POFT_FORWARDING_TO_HOST
+          node.vm.network "forwarded_port", guest: 80, host: "#{HOST_PORT + i}"
+        end
         node.vm.network :public_network, bridge: get_bridge_adapter()
       else
         node.vm.network :private_network, ip: IP_NW + ".#{NODE_IP_START + i}"
