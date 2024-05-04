@@ -37,22 +37,3 @@ sudo chown $(id -u $USER):$(id -g $USER) /home/$USER/.kube/config
 log_message "Testing..."
 sleep 10
 sudo -H -u $USER bash -c "kubectl get pods"
-
-log_message "Setup Pod networking (weave)"
-wget wget https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml -O weave.yaml
-sudo chown $USER weave.yaml
-
-# add CIDR setup to weave network definition
-sed -i -e "/- name: INIT_CONTAINER/i\\
-                - name: IPALLOC_RANGE\\
-                  value: $NETWORK_CIDR" weave.yaml
-
-sudo -H -u $USER bash -c "kubectl apply -f weave.yaml"
-
-log_message "Use this command on wokrers to connect it to this k8s cluster:"
-echo "sudo $(kubeadm token create --print-join-command)"
-
-
-
-
-
