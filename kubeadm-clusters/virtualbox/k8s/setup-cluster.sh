@@ -37,3 +37,6 @@ sudo chown $(id -u $USER):$(id -g $USER) /home/$USER/.kube/config
 log_message "Testing..."
 sleep 10
 sudo -H -u $USER bash -c "kubectl get pods"
+
+echo "Add k8s metric server"
+sudo -H -u $USER bash -c "kubectl apply -f https://raw.githubusercontent.com/pythianarora/total-practice/master/sample-kubernetes-code/metrics-server.yaml"
