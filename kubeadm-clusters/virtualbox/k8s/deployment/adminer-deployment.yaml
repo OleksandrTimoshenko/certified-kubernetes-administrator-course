@@ -27,6 +27,9 @@ spec:
             - name: ADMINER_DEFAULT_SERVER
               value: postgres
           resources:
+            requests:
+              memory: "128Mi"
+              cpu: "300m"
             limits:
               memory: "256Mi"
               cpu: "500m"
