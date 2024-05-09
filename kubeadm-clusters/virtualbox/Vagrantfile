@@ -9,8 +9,9 @@
 #            Use this mode if for some reason BRIDGE doesn't work for you.
 BUILD_MODE = ENV["NETWORK_MODE"] || "BRIDGE"
 
-POFT_FORWARDING_TO_HOST = (ENV["POFT_FORWARDING_TO_HOST"] || "false").downcase == "true"
-HOST_PORT = ENV["HOST_PORT"] || 8080
+PORT_FORWARDING_TO_HOST = (ENV["PORT_FORWARDING_TO_HOST"] || "false").downcase == "true"
+
+HOST_PORT = (ENV["HOST_PORT"] || 8080).to_i
 
 # Network parameters for bridbe mode
 
@@ -28,7 +29,7 @@ MASTER_NAME = "controlplane"
 
 WEAVE_NETWORK_PLUGIN_VERSION="2.8.1"
 INGRESS_NGINX_CONTROLLER_VERSION="1.10.1"
-DOMAIN="adminer.k8s.com"
+DOMAINS="adminer.k8s.com, kanban.k8s.com"
 
 # Multi threads setup can be used to run commands in all nodes in parallel,
 # but in my case, the logs are displayed with glitches on multiple threads,
@@ -146,7 +147,7 @@ Vagrant.configure("2") do |config|
     end
     node.vm.hostname = MASTER_NAME
     if BUILD_MODE == "BRIDGE"
-      if POFT_FORWARDING_TO_HOST
+      if PORT_FORWARDING_TO_HOST
         node.vm.network "forwarded_port", guest: 80, host: HOST_PORT
       end
       adapter = ""
@@ -166,12 +167,12 @@ Vagrant.configure("2") do |config|
     config.vm.define "node0#{i}" do |node|
       node.vm.provider "virtualbox" do |vb|
         vb.name = "node0#{i}"
-        vb.memory = 1024
+        vb.memory = 2048
         vb.cpus = 1
       end
       node.vm.hostname = "node0#{i}"
       if BUILD_MODE == "BRIDGE"
-        if POFT_FORWARDING_TO_HOST
+        if PORT_FORWARDING_TO_HOST
           node.vm.network "forwarded_port", guest: 80, host: "#{HOST_PORT + i}"
         end
         node.vm.network :public_network, bridge: get_bridge_adapter()
@@ -241,8 +242,8 @@ Vagrant.configure("2") do |config|
         puts "    Weave network plugin setup started in #{MASTER_NAME} node..."
         system("vagrant ssh #{MASTER_NAME} -c 'sudo /vagrant/k8s/setup-weave.sh #{WEAVE_NETWORK_PLUGIN_VERSION}'")
         puts "    Nginx ingress controller setup started in #{MASTER_NAME} node..."
-        system("vagrant ssh #{MASTER_NAME} -c 'sudo /vagrant/k8s/setup-ingress.sh #{MASTER_NAME} #{DOMAIN} #{INGRESS_NGINX_CONTROLLER_VERSION}'")
-        # TODO: add setup /etc/hosts on host machine (127.0.0.1 adminer.k8s.com or 127.0.0.1 $DOMAIN)
+        system("vagrant ssh #{MASTER_NAME} -c 'sudo /vagrant/k8s/setup-ingress.sh #{MASTER_NAME} \"#{DOMAINS}\" #{INGRESS_NGINX_CONTROLLER_VERSION}'")
+
         CONNECT_STR = `vagrant ssh #{MASTER_NAME} -c 'kubeadm token create --print-join-command'`.strip
 
         puts "    Connect worker nodes to the master..."
