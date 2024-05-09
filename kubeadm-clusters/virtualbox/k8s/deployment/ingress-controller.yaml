@@ -1,11 +1,10 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: adminer-ingress
+  name: ingress-service
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: nginx
 spec:
-  ingressClassName: nginx
   rules:
     - host: adminer.k8s.com
       http:
@@ -17,3 +16,20 @@ spec:
                 name: adminer
                 port:
                   number: 8080
+    - host: kanban.k8s.com
+      http:
+        paths:
+          - path: /api/
+            pathType: Prefix
+            backend:
+              service:
+                name: kanban-app
+                port:
+                  number: 8080
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kanban-ui
+                port:
+                  number: 80
