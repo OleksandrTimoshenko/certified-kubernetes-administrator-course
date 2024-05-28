@@ -1,0 +1,9 @@
+
+helm install -f /vagrant/k8s/helm/kanban-postgres.yaml postgres /vagrant/k8s/helm/postgres
+
+helm install -f /vagrant/k8s/helm/adminer.yaml adminer /vagrant/k8s/helm/app
+helm install -f /vagrant/k8s/helm/kanban-app.yaml kanban-app /vagrant/k8s/helm/app
+helm install -f /vagrant/k8s/helm/kanban-ui.yaml kanban-ui /vagrant/k8s/helm/app
+
+helm dependency update /vagrant/k8s/helm/ingress/
+helm install -f /vagrant/k8s/helm/ingress.yaml ingress /vagrant/k8s/helm/ingress
