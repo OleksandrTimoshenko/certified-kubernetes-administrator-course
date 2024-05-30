@@ -38,6 +38,10 @@ SINGLE_THREAD_MODE = (ENV["SINGLE_THREAD_MODE"] || "true").downcase == "true"
 
 INSTALL_HELM = (ENV["INSTALL_HELM"] || "true").downcase == "true"
 
+DEPLOY_APP = (ENV["DEPLOY_APP"] || "true").downcase == "true"
+
+DEPLOY_APP_MODE = (ENV["DEPLOY_APP_MODE"] || "default")
+
 # Host operating sysem detection
 module OS
   def OS.windows?
@@ -252,16 +256,20 @@ Vagrant.configure("2") do |config|
           system("vagrant ssh #{node} -c '#{command}'")
         end
 
-        puts "    Start deployment..."
-        system("vagrant ssh #{MASTER_NAME} -c '/vagrant/k8s/start-deploy.sh'")
-
-        system("vagrant ssh #{MASTER_NAME} -c '/vagrant/k8s/autocomplition.sh'")
-        puts "    Autocomplition setuped in #{MASTER_NAME} node..."
-
-        if INSTALL_HELM
+        if INSTALL_HELM || DEPLOY_APP_MODE == "helm-charts" || DEPLOY_APP_MODE == "helmfile"
           system("vagrant ssh #{MASTER_NAME} -c 'curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash'")
           puts "    Helm installed in #{MASTER_NAME} node..."
         end
+
+        if DEPLOY_APP
+          puts "    Start deployment..."
+          system("vagrant ssh #{MASTER_NAME} -c '/vagrant/k8s/start-deploy.sh #{DEPLOY_APP_MODE}'")
+        else
+          puts "    Skipping application deployment..."
+        end
+
+        system("vagrant ssh #{MASTER_NAME} -c '/vagrant/k8s/autocomplition.sh'")
+        puts "    Autocomplition setuped in #{MASTER_NAME} node..."
 
         puts <<~EOF
 

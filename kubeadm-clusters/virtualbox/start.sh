@@ -11,4 +11,10 @@ fi
 sudo ./k8s/setup-localhost.sh "adminer.k8s.com, kanban.k8s.com" $HOST_PORT
 
 vagrant destroy -f
-HOST_PORT=$HOST_PORT PORT_FORWARDING_TO_HOST=true SINGLE_THREAD_MODE=false vagrant up
+
+#  deploy app modes:
+#  default: simple yaml deffinitions
+#  helm-charts
+#  helmfile
+
+HOST_PORT=$HOST_PORT PORT_FORWARDING_TO_HOST=true SINGLE_THREAD_MODE=false DEPLOY_APP=true DEPLOY_APP_MODE="helm-charts" vagrant up

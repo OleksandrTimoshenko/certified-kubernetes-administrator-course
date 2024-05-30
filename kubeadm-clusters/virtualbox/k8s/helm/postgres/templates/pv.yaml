@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: {{ .Values.postgres.volume.pv.kind }}
+metadata:
+  name: {{ .Values.postgres.volume.pv.name }}
+spec:
+  persistentVolumeReclaimPolicy: {{ .Values.postgres.volume.pv.policy }}
+  accessModes:
+    - {{ .Values.postgres.volume.pv.accessMode }}
+  capacity:
+    storage: {{ .Values.postgres.volume.pv.storage }}
+  hostPath:
+    path: {{ .Values.postgres.volume.pv.hostpath }}
