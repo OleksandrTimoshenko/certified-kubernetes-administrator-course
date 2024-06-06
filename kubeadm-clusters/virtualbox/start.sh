@@ -17,4 +17,4 @@ vagrant destroy -f
 #  helm-charts
 #  helmfile
 
-HOST_PORT=$HOST_PORT PORT_FORWARDING_TO_HOST=true SINGLE_THREAD_MODE=false DEPLOY_APP=true DEPLOY_APP_MODE="helm-charts" vagrant up
+HOST_PORT=$HOST_PORT PORT_FORWARDING_TO_HOST=true SINGLE_THREAD_MODE=false DEPLOY_APP=true DEPLOY_APP_MODE=helmfile vagrant up

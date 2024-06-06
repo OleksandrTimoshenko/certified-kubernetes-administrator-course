@@ -37,6 +37,8 @@ DOMAINS="adminer.k8s.com, kanban.k8s.com"
 SINGLE_THREAD_MODE = (ENV["SINGLE_THREAD_MODE"] || "true").downcase == "true"
 
 INSTALL_HELM = (ENV["INSTALL_HELM"] || "true").downcase == "true"
+INSTALL_HELMFILE = (ENV["INSTALL_HELMFILE"] || "true").downcase == "true"
+HELMFILE_VERSION = "0.165.0" # https://github.com/helmfile/helmfile/releases
 
 DEPLOY_APP = (ENV["DEPLOY_APP"] || "true").downcase == "true"
 
@@ -259,6 +261,12 @@ Vagrant.configure("2") do |config|
         if INSTALL_HELM || DEPLOY_APP_MODE == "helm-charts" || DEPLOY_APP_MODE == "helmfile"
           system("vagrant ssh #{MASTER_NAME} -c 'curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash'")
           puts "    Helm installed in #{MASTER_NAME} node..."
+        end
+
+        if INSTALL_HELMFILE || DEPLOY_APP_MODE == "helmfile"
+          system("vagrant ssh #{MASTER_NAME} -c 'wget https://github.com/helmfile/helmfile/releases/download/v#{HELMFILE_VERSION}/helmfile_#{HELMFILE_VERSION}_linux_amd64.tar.gz'")
+          system("vagrant ssh #{MASTER_NAME} -c 'tar -xvzf helmfile_#{HELMFILE_VERSION}_linux_amd64.tar.gz'")
+          system("vagrant ssh #{MASTER_NAME} -c 'sudo mv ./helmfile /usr/bin/'")
         end
 
         if DEPLOY_APP

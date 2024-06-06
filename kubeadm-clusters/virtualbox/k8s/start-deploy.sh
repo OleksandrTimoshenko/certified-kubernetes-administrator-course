@@ -24,9 +24,8 @@ apply_deployment() {
             sudo -H -u $USER bash -c "helm install -f /vagrant/k8s/helm/ingress.yaml ingress /vagrant/k8s/helm/ingress"
             ;;
         "helmfile")
-            # TODO: add helmfile deployment
-            echo "Applying helmfile deployment..."
-            echo "WARNING: step skipped (helmfile deployment still in development...)"
+            sudo -H -u $USER bash -c "helmfile repos -f /vagrant/k8s/helm/helmfile.yaml"
+            sudo -H -u $USER bash -c "helmfile sync -f /vagrant/k8s/helm/helmfile.yaml"
             ;;
         *)
             echo "ERROR: Invalid DEPLOY_APP_MODE: $DEPLOY_APP_MODE"
