@@ -155,6 +155,7 @@ Vagrant.configure("2") do |config|
     if BUILD_MODE == "BRIDGE"
       if PORT_FORWARDING_TO_HOST
         node.vm.network "forwarded_port", guest: 80, host: HOST_PORT
+        node.vm.network "forwarded_port", guest: 443, host: 1443
       end
       adapter = ""
       node.vm.network :public_network, bridge: get_bridge_adapter()
@@ -180,6 +181,7 @@ Vagrant.configure("2") do |config|
       if BUILD_MODE == "BRIDGE"
         if PORT_FORWARDING_TO_HOST
           node.vm.network "forwarded_port", guest: 80, host: "#{HOST_PORT + i}"
+          node.vm.network "forwarded_port", guest: 443, host: "#{1443 + i}"
         end
         node.vm.network :public_network, bridge: get_bridge_adapter()
       else
