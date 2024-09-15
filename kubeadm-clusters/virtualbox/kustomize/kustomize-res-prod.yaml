@@ -1,0 +1,282 @@
+apiVersion: v1
+data:
+  POSTGRES_DB: kanban
+  POSTGRES_PASSWORD: kanban
+  POSTGRES_USER: kanban
+kind: ConfigMap
+metadata:
+  labels:
+    group: db
+  name: prod-postgres-config-6ddb9m96c8
+  namespace: prod-namespace
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    group: db
+  name: prod-adminer
+  namespace: prod-namespace
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    app: adminer
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    group: backend
+  name: prod-kanban-app
+  namespace: prod-namespace
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    app: kanban-app
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    group: backend
+  name: prod-kanban-ui
+  namespace: prod-namespace
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: kanban-ui
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    group: db
+  name: prod-postgres
+  namespace: prod-namespace
+spec:
+  ports:
+  - port: 5432
+    targetPort: 5432
+  selector:
+    app: postgres
+  type: ClusterIP
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: prod-pv-log
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 6Gi
+  hostPath:
+    path: /pv/log-prod
+  persistentVolumeReclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: prod-postgres-persistent-volume-claim
+  namespace: prod-namespace
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 6Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: adminer
+    group: db
+  name: prod-adminer
+  namespace: prod-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: adminer
+  template:
+    metadata:
+      labels:
+        app: adminer
+        group: db
+    spec:
+      containers:
+      - env:
+        - name: ADMINER_DESIGN
+          value: pepa-linha
+        - name: ADMINER_DEFAULT_SERVER
+          value: postgres
+        image: adminer:4.7.6-standalone
+        name: adminer
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            cpu: 500m
+            memory: 256Mi
+          requests:
+            cpu: 300m
+            memory: 128Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kanban-app
+    group: backend
+  name: prod-kanban-app
+  namespace: prod-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kanban-app
+  template:
+    metadata:
+      labels:
+        app: kanban-app
+        group: backend
+    spec:
+      containers:
+      - env:
+        - name: DB_SERVER
+          value: postgres
+        envFrom:
+        - configMapRef:
+            name: prod-postgres-config-6ddb9m96c8
+        image: wkrzywiec/kanban-app:k8s
+        name: kanban-app
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            cpu: 750m
+            memory: 256Mi
+          requests:
+            cpu: 350m
+            memory: 128Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kanban-ui
+    group: frontend
+  name: prod-kanban-ui
+  namespace: prod-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kanban-ui
+  template:
+    metadata:
+      labels:
+        app: kanban-ui
+        group: frontend
+    spec:
+      containers:
+      - image: wkrzywiec/kanban-ui:k8s
+        name: kanban-ui
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: 500m
+            memory: 256Mi
+          requests:
+            cpu: 250m
+            memory: 128Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: postgres
+    group: db
+  name: prod-postgres
+  namespace: prod-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+        type: db
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: prod-postgres-config-6ddb9m96c8
+        image: postgres:9.6-alpine
+        name: postgres
+        ports:
+        - containerPort: 5432
+        resources:
+          limits:
+            cpu: 500m
+            memory: 256Mi
+          requests:
+            cpu: 250m
+            memory: 128Mi
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: postgres-storage
+      volumes:
+      - name: postgres-storage
+        persistentVolumeClaim:
+          claimName: prod-postgres-persistent-volume-claim
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  name: prod-ingress-service
+  namespace: prod-namespace
+spec:
+  rules:
+  - host: prod-adminer.k8s.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: prod-adminer
+            port:
+              number: 8080
+        path: /
+        pathType: Prefix
+  - host: prod-kanban.k8s.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: prod-kanban-app
+            port:
+              number: 8080
+        path: /api/
+        pathType: Prefix
+      - backend:
+          service:
+            name: prod-kanban-ui
+            port:
+              number: 80
+        path: /
+        pathType: Prefix

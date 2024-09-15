@@ -7,15 +7,15 @@ kustomize version
 
 # build without changes
 ```
-kustomize build ./base/ > res.yaml
+kustomize build ./base/ > kustomize-res.yaml
 ```
 
 # build for DEV
 ```
-kustomize build ./overlays/dev/ > res-dev.yaml
+kustomize build ./overlays/dev/ > kustomize-res-dev.yaml
 ```
 
 # build for PROD
 ```
-kustomize build ./overlays/prod/ > res-prod.yaml
+kustomize build ./overlays/prod/ > kustomize-res-prod.yaml
 ```
