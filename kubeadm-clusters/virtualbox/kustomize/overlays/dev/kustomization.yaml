@@ -9,13 +9,10 @@ namespace: dev-namespace
 
 patches:
 - path: pv-hostpath-patch.yaml
+- target:
+    group: networking.k8s.io
+    version: v1
+    kind: Ingress
+    name: ingress-service
+  path: ingress-patch.yaml
 
-configMapGenerator:
-  - name: postgres-config
-    literals:
-      - POSTGRES_DB=kanban
-      - POSTGRES_USER=kanban
-      - POSTGRES_PASSWORD=kanban
-generatorOptions:
-  labels:
-    group: db
