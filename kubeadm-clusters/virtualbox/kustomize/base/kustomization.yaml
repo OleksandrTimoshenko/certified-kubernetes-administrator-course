@@ -1,0 +1,15 @@
+resources:
+- adminer-deployment.yaml
+- adminer-svc.yaml
+- ingress-controller.yaml
+- kanban-app-deployment.yaml
+- kanban-app-svc.yaml
+- kanban-ui-deployment.yaml
+- kanban-ui-svc.yaml
+- postgres-config.yaml
+- postgres-deployment.yaml
+- postgres-pvc.yaml
+- postgres-svc.yaml
+- postgress-pv.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
