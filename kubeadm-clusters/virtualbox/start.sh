@@ -7,7 +7,7 @@ if (( HOST_PORT < 1024 )); then
   exit 1
 fi
 
-# change setup-localhost script if you don`t use apt package manager...
+# change setup-localhost script if you don`t use debian-based distro as localhost...
 sudo ./k8s/setup-localhost.sh "adminer.k8s.com, kanban.k8s.com" $HOST_PORT
 
 vagrant destroy -f
