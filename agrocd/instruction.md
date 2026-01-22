@@ -41,8 +41,13 @@ or you can use `https://github.com/argoproj/argo-cd/blob/master/manifests/instal
 2. Reload Nginx
 `sudo rm -rf /etc/nginx/sites-enabled/argocd.k8s.com && sudo ln -s /etc/nginx/sites-available/argocd.k8s.com /etc/nginx/sites-enabled/ && sudo nginx -t && sudo nginx -s reload`
 
-3. Test: `curl -k https://argocd.k8s.com`
+3. Update /etc/hosts
+```
+sudo nano /etc/hosts
+    127.0.0.1 argocd.k8s.com
+```
 
+4. Test: `curl -k https://argocd.k8s.com`
 
 
 ### Setup host networking
@@ -54,3 +59,9 @@ or you can use `https://github.com/argoproj/argo-cd/blob/master/manifests/instal
 
 2. Reload Nginx
 `sudo rm -rf /etc/nginx/sites-enabled/argocd.k8s.com && sudo ln -s /etc/nginx/sites-available/argocd.k8s.com /etc/nginx/sites-enabled/ && sudo nginx -t && sudo nginx -s reload`
+
+3. Update /etc/hosts on local mashine
+```
+sudo nano /etc/hosts
+    127.0.0.1 argocd.k8s.com
+```
