@@ -6,3 +6,4 @@
 
 argocd.k8s.com.crt
 argocd.k8s.com.key
+TODO.*
