@@ -1,3 +1,9 @@
+# Disclaimer
+
+The main CKA repository was used as a basis for customization and creation of a k8s sandbox (self-hosted k8s cluster using Vagrant + kubeadm), as well as for working with different types of deployments (yaml definitions, helm, helm-charts, kustomize) and GitOps (ArgoCD).
+### It is not suitable for use in production.
+See [instruction](./kubeadm-clusters/virtualbox/README.md)
+
 # Certified Kubernetes Administrator (CKA) Course
 
 These are notes from the [Certified Kubernetes Administrator Course](https://kodekloud.com/courses/certified-kubernetes-administrator-cka/) hosted on KodeKloud.
