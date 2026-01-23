@@ -28,7 +28,7 @@ NUM_WORKER_NODES = 2
 MASTER_NAME = "controlplane"
 
 WEAVE_NETWORK_PLUGIN_VERSION="2.8.1"
-INGRESS_NGINX_CONTROLLER_VERSION="1.10.1"
+INGRESS_NGINX_CONTROLLER_VERSION="1.14.1"
 DOMAINS="adminer.k8s.com, kanban.k8s.com"
 
 # Multi threads setup can be used to run commands in all nodes in parallel,
@@ -38,7 +38,7 @@ SINGLE_THREAD_MODE = (ENV["SINGLE_THREAD_MODE"] || "true").downcase == "true"
 
 INSTALL_HELM = (ENV["INSTALL_HELM"] || "true").downcase == "true"
 INSTALL_HELMFILE = (ENV["INSTALL_HELMFILE"] || "true").downcase == "true"
-HELMFILE_VERSION = "0.165.0" # https://github.com/helmfile/helmfile/releases
+HELMFILE_VERSION = "1.2.3" # https://github.com/helmfile/helmfile/releases
 
 DEPLOY_APP = (ENV["DEPLOY_APP"] || "true").downcase == "true"
 

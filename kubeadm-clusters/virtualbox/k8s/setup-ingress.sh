@@ -2,7 +2,7 @@
 
 MASTER_NODE_NAME=$1 # controlplane
 DOMAINS=$2 # adminer.k8s.com, kanban.k8s.com
-INGRESS_NGINX_CONTROLLER_VERSION=$3 # 1.10.1
+INGRESS_NGINX_CONTROLLER_VERSION=$3 # 1.14.1
 USER="vagrant"
 
 DOMAINS=$(echo "$DOMAINS" | tr -d ' ')
