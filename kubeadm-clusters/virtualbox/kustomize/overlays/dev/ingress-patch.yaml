@@ -1,0 +1,6 @@
+- op: replace
+  path: /spec/rules/0/host
+  value: dev-adminer.k8s.com
+- op: replace
+  path: /spec/rules/1/host
+  value: dev-kanban.k8s.com

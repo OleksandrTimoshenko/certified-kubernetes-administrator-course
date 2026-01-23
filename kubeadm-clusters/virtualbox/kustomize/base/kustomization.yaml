@@ -1,0 +1,28 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- adminer-deployment.yaml
+- adminer-svc.yaml
+- ingress-controller.yaml
+- kanban-app-deployment.yaml
+- kanban-app-svc.yaml
+- kanban-ui-deployment.yaml
+- kanban-ui-svc.yaml
+- postgres-deployment.yaml
+- postgres-pvc.yaml
+- postgres-svc.yaml
+- postgress-pv.yaml
+
+# I can't use different values for DEV and PROD,
+# because these values were set in the application image, which I don't intend to change
+# so I'm gonna put configMapGenerator here
+configMapGenerator:
+  - name: postgres-config
+    literals:
+      - POSTGRES_DB=kanban
+      - POSTGRES_USER=kanban
+      - POSTGRES_PASSWORD=kanban
+generatorOptions:
+  labels:
+    group: db
