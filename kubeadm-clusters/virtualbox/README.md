@@ -23,7 +23,7 @@ http://adminer.k8s.com
 ## Swagger UI
 http://kanban.k8s.com/api/swagger-ui.html#/
 
-## ArgoCD (for now custom [setup](../../agrocd/instruction.md))
+## ArgoCD (for now custom [setup](./agrocd/instruction.md))
 https://argocd.k8s.com/
 ### Credentials
 - admin
